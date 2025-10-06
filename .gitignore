@@ -1,0 +1,47 @@
+﻿# OS
+.DS_Store
+Thumbs.db
+
+# Editors/IDE
+.vscode/
+.idea/
+
+# Python caches & envs
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.venv/
+venv/
+ENV/
+pip-wheel-metadata/
+
+# Env/Secrets
+.env
+.env.*
+
+# Build/Dist
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Data & model artifacts (avoid huge files)
+data/
+datasets/
+checkpoints/
+models/
+*.pt
+*.pth
+*.ckpt
+*.bin
+
+# Logs
+*.log
+# Large artifacts
+*.pkl
+*.joblib
+.venv*/
+models/
+checkpoints/

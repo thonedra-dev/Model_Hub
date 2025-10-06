@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ModelHub</title>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    
+    <h2>ModelHub</h2>
+    <p>Select a model to test:</p>
+
+    <!-- Model Buttons -->
+    <button onclick="openPopup('housePricePopup')">🏠 House Price Prediction</button>
+    <button onclick="openPopup('carPricePopup')">🚗 Car Price Prediction</button>
+    <button onclick="openPopup('winePointsPopup')">🍷 Wine Points Prediction</button>
+    <!-- ^ Added wine model open button -->
+
+    <!-- ===========================
+         HOUSE PRICE PREDICTION POPUP
+    ============================ -->
+    <div id="housePricePopup" class="popup">
+        <div class="popup-content">
+            <span class="close-btn" onclick="closePopup('housePricePopup')">&times;</span>
+            <h3>House Price Prediction</h3>
+            <form id="houseForm" action="/predict" method="POST">
+                <label>Rooms:</label><input type="text" name="Rooms" required>
+                <label>Distance:</label><input type="text" name="Distance" required>
+                <label>Bathroom:</label><input type="text" name="Bathroom" required>
+                <label>Landsize:</label><input type="text" name="Landsize" required>
+                <label>BuildingArea:</label><input type="text" name="BuildingArea" required>
+                <label>Lattitude:</label><input type="text" name="Lattitude" required>
+                <label>Longtitude:</label><input type="text" name="Longtitude" required>
+                <label>Car:</label><input type="text" name="Car" required>
+                <button type="submit">Predict</button>
+            </form>
+            <div class="result" id="housePredictionResult">{{ prediction_text or '' }}</div>
+        </div>
+    </div>
+
+    <!-- ===========================
+         CAR PRICE PREDICTION POPUP
+    ============================ -->
+    <div id="carPricePopup" class="popup">
+        <div class="popup-content">
+            <span class="close-btn" onclick="closePopup('carPricePopup')">&times;</span>
+            <h3 id="carStepTitle">Car Price Prediction - Step 1/8: Manufacturer</h3>
+
+            <form id="carForm">
+                <!-- Hidden inputs for JS to fill -->
+                <input type="hidden" name="Manufacturer" id="inputManufacturer">
+                <input type="hidden" name="Model" id="inputModel">
+                <input type="hidden" name="Category" id="inputCategory">
+                <input type="hidden" name="Leather interior" id="inputLeatherinterior">
+                <input type="hidden" name="Fuel type" id="inputFueltype">
+                <input type="hidden" name="Gear box type" id="inputGearboxtype">
+                <input type="hidden" name="Drive wheels" id="inputDrivewheels">
+
+                <!-- Steps -->
+                <div id="step-Manufacturer" class="step-container" style="display: block;">
+                    <p>Select the car <b>Manufacturer</b>:</p>
+                    <select id="selectManufacturer" name="Manufacturer_select" style="width: 100%;" required>
+                        <option value="">-- Choose Manufacturer --</option>
+                        <option value="LEXUS">LEXUS</option>
+                        <option value="CHEVROLET">CHEVROLET</option>
+                        <option value="HONDA">HONDA</option>
+                        <option value="FORD">FORD</option>
+                        <option value="HYUNDAI">HYUNDAI</option>
+                        <option value="TOYOTA">TOYOTA</option>
+                        <option value="MERCEDES-BENZ">MERCEDES-BENZ</option>
+                        <option value="OPEL">OPEL</option>
+                        <option value="PORSCHE">PORSCHE</option>
+                        <option value="BMW">BMW</option>
+                    </select>
+                </div>
+
+                <div id="step-Model" class="step-container">
+                    <p>Select the <b>Model</b>:</p>
+                    <select id="selectModel" name="Model_select" style="width: 100%;" required>
+                        <option value="">-- Choose Model --</option>
+                        <option value="RX 450">RX 450</option>
+                        <option value="Equinox">Equinox</option>
+                        <option value="FIT">FIT</option>
+                        <option value="Escape">Escape</option>
+                        <option value="Santa FE">Santa FE</option>
+                    </select>
+                </div>
+
+                <div id="step-Category" class="step-container">
+                    <p>Select the car <b>Category</b>:</p>
+                    <div id="buttons-Category"></div>
+                </div>
+
+                <div id="step-Leather interior" class="step-container">
+                    <p>Select if the car has <b>Leather Interior</b>:</p>
+                    <div id="buttons-Leather interior"></div>
+                </div>
+
+                <div id="step-Fuel type" class="step-container">
+                    <p>Select the <b>Fuel type</b>:</p>
+                    <div id="buttons-Fuel type"></div>
+                </div>
+
+                <div id="step-Gear box type" class="step-container">
+                    <p>Select the <b>Gear box type</b>:</p>
+                    <div id="buttons-Gear box type"></div>
+                </div>
+
+                <div id="step-Drive wheels" class="step-container">
+                    <p>Select the <b>Drive wheels</b> configuration:</p>
+                    <div id="buttons-Drive wheels"></div>
+                </div>
+
+                <div id="step-Numerical" class="step-container">
+                    <h4>Final Details (Numerical Inputs)</h4>
+                    <div class="input-group">
+                        <label>Prod. year:</label><input type="text" name="Prod. year" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Mileage (km):</label><input type="text" name="Mileage" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Engine volume:</label><input type="text" name="Engine volume" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Airbags:</label><input type="text" name="Airbags" required>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="navigation-buttons">
+                    <button type="button" id="prevBtn" onclick="nextPrev(-1)" disabled>Previous</button>
+                    <button type="button" id="nextBtn" onclick="nextPrev(1)">Next</button>
+                    <button type="submit" id="submitBtn" style="display: none;">Predict Car Price</button>
+                </div>
+            </form>
+
+            <div class="result" id="carPredictionResult">{{ car_prediction_text or '' }}</div>
+        </div>
+    </div>
+
+    <!-- ===========================
+         WINE POINTS PREDICTION POPUP
+    ============================ -->
+    <div id="winePointsPopup" class="popup">
+      <div class="popup-content">
+        <span class="close-btn" onclick="closePopup('winePointsPopup')">&times;</span>
+        <h3>Wine Points Prediction</h3>
+
+        <form id="wineForm" action="/predict_wine" method="POST">
+          <div class="input-group">
+            <label for="country">Country:</label>
+            <input type="text" id="country" name="country" required>
+          </div>
+
+          <div class="input-group">
+            <label for="province">Province:</label>
+            <input type="text" id="province" name="province" required>
+          </div>
+
+          <div class="input-group">
+            <label for="region_1">Region 1:</label>
+            <input type="text" id="region_1" name="region_1" required>
+          </div>
+
+          <div class="input-group">
+            <label for="variety">Variety:</label>
+            <input type="text" id="variety" name="variety" required>
+          </div>
+
+          <div class="input-group">
+            <label for="winery">Winery:</label>
+            <input type="text" id="winery" name="winery" required>
+          </div>
+
+          <div class="input-group">
+            <label for="price">Price:</label>
+            <input type="number" id="price" name="price" step="0.01" min="0" required>
+          </div>
+
+          <button type="submit">Predict Wine Points</button>
+        </form>
+
+        <div class="result" id="winePredictionResult">{{ wine_prediction_text or '' }}</div>
+      </div>
+    </div>
+
+    <!-- ===========================
+         JAVASCRIPT SECTION
+    ============================ -->
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+    // ----- CAR WIZARD (unchanged) -----
+    const form = document.getElementById("carForm");
+    const steps = [
+        "Manufacturer","Model","Category","Leather interior",
+        "Fuel type","Gear box type","Drive wheels","Numerical"
+    ];
+    const optionData = {
+        "Category": ["Sedan","SUV","Hatchback","Coupe","Convertible"],
+        "Leather interior": ["Yes","No"],
+        "Fuel type": ["Petrol","Diesel","Hybrid","Electric"],
+        "Gear box type": ["Automatic","Manual"],
+        "Drive wheels": ["Front","Rear","All"]
+    };
+    let currentStep = 0;
+
+    Object.keys(optionData).forEach(key => {
+        const container = document.getElementById(`buttons-${key}`);
+        if (!container) return;
+        optionData[key].forEach(value => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.textContent = value;
+            btn.className = "option-btn";
+            btn.onclick = () => {
+                document.getElementById(`input${key.replace(/ /g, '')}`).value = value;
+                nextPrev(1);
+            };
+            container.appendChild(btn);
+        });
+    });
+
+    function showStep(n) {
+        steps.forEach((step, i) => {
+            const el = document.getElementById(`step-${step}`);
+            if (el) el.style.display = (i === n) ? "block" : "none";
+        });
+        document.getElementById("prevBtn").disabled = n === 0;
+        document.getElementById("nextBtn").style.display = (n === steps.length - 1) ? "none" : "inline-block";
+        document.getElementById("submitBtn").style.display = (n === steps.length - 1) ? "inline-block" : "none";
+        document.getElementById("carStepTitle").textContent =
+            `Car Price Prediction - Step ${n + 1}/${steps.length}: ${steps[n]}`;
+    }
+
+    window.nextPrev = function (n) {
+        const currentStepId = steps[currentStep];
+        if (n === 1 && !validateStep(currentStepId)) return false;
+        currentStep += n;
+        if (currentStep < 0) currentStep = 0;
+        if (currentStep >= steps.length) currentStep = steps.length - 1;
+        showStep(currentStep);
+    };
+
+    function validateStep(stepName) {
+        if (stepName === "Manufacturer") {
+            const val = document.getElementById("selectManufacturer").value;
+            if (!val) { alert("Please select a Manufacturer."); return false; }
+            document.getElementById("inputManufacturer").value = val;
+        } else if (stepName === "Model") {
+            const val = document.getElementById("selectModel").value;
+            if (!val) { alert("Please select a Model."); return false; }
+            document.getElementById("inputModel").value = val;
+        } else if (optionData[stepName]) {
+            const hiddenInput = document.getElementById(`input${stepName.replace(/ /g, '')}`);
+            if (!hiddenInput.value) { alert(`Please select a choice for ${stepName}.`); return false; }
+        } else if (stepName === "Numerical") {
+            const inputs = form.querySelectorAll("#step-Numerical input");
+            for (let input of inputs) {
+                if (!input.value.trim()) { alert("Please fill all numerical fields."); return false; }
+            }
+        }
+        return true;
+    }
+
+    showStep(currentStep);
+
+    form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        try {
+            const response = await fetch("/predict_car", { method: "POST", body: formData });
+            const text = await response.text();
+            const doc = new DOMParser().parseFromString(text, "text/html");
+            const resultDiv = doc.querySelector("#carPredictionResult");
+            document.getElementById("carPredictionResult").innerHTML =
+                resultDiv ? resultDiv.innerHTML : "Error fetching result";
+        } catch (err) {
+            document.getElementById("carPredictionResult").innerHTML = "Error: " + err.message;
+        }
+    });
+
+    // ----- HOUSE: auto-open popup if server returned result -----
+    const houseResult = document.getElementById("housePredictionResult");
+    if (houseResult && houseResult.textContent.trim()) {
+        openPopup("housePricePopup");
+    }
+
+    // ===== WINE POINTS: AJAX submit + keep popup open (NEW) =====
+    const wineForm = document.getElementById("wineForm");
+    if (wineForm) {
+        wineForm.addEventListener("submit", async function (e) {
+            e.preventDefault(); // prevent full-page POST (popup would close)
+            const formData = new FormData(this);
+            try {
+                const response = await fetch("/predict_wine", { method: "POST", body: formData });
+                const text = await response.text();
+                const doc = new DOMParser().parseFromString(text, "text/html");
+                const resultDiv = doc.querySelector("#winePredictionResult");
+                const target = document.getElementById("winePredictionResult");
+                target.innerHTML = resultDiv ? resultDiv.innerHTML : "Error fetching result";
+                openPopup("winePointsPopup"); // ensure popup stays open to show result
+            } catch (err) {
+                document.getElementById("winePredictionResult").innerHTML = "Error: " + err.message;
+            }
+        });
+
+        // If server rendered a wine result (e.g., direct POST), reopen popup
+        const wineResult = document.getElementById("winePredictionResult");
+        if (wineResult && wineResult.textContent.trim()) {
+            openPopup("winePointsPopup");
+        }
+    }
+});
+
+// ----- Popup helpers (unchanged) -----
+function openPopup(id) { document.getElementById(id).style.display = "block"; }
+function closePopup(id) { document.getElementById(id).style.display = "none"; }
+</script>
+
+
+</body>
+</html>
